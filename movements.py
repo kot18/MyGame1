@@ -1,5 +1,6 @@
 import pygame
 import sys
+import time
 
 from bullet import Bullet
 from enemy import Enm
@@ -56,23 +57,48 @@ def update_bullets(enemys, bullets):
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
 
-    """Проверка на коллизию, где ключ - снаряд, а значение противник. Значения True означают, что при соприкосновении снаряда и противника будут удаляться снаряд и противник"""
     collisions = pygame.sprite.groupcollide(bullets, enemys, True, True)
 
-def update_enm(enemys):
+def player_kill(stats, screen, Player, enemys, bullets):
+    """Столкновение игрока и противника"""
+
+    stats.player_left -= 1
+
+    enemys.empty()
+
+    bullets.empty()
+
+    spawn_enemys(screen, enemys)
+
+    Player.create_player()
+
+    time.sleep(1) #После смерти игрока, юудет задержка в 1 секунду
+
+def update_enm(stats, screen, Player, enemys, bullets):
+
+    """Обновление позиции противника"""
     enemys.update()
 
+    if pygame.sprite.spritecollideany(Player, enemys):
+        player_kill(stats, screen, Player, enemys, bullets)
+
 def spawn_enemys(screen, enemys):
+
+    """Спавн противника"""
+
+    """Тут же будет расчёт, сколько противников поместится в ширину и в высоту. Так же можно уменьшать и увеличивать высоту волны"""
 
     enm = Enm(screen)
 
     enm_width = enm.rect.width
 
-    number_enm_x = int((800 - 2 * enm_width) / enm_width) #ищем сколько противников поместится в ширину
+    number_enm_x = int((800 - 2 * enm_width) / enm_width) #Ищем сколько противников поместится в ширину
 
     enm_height = enm.rect.height
 
     number_enm_y = int((800 - 100 - 2 * enm_height) / enm_height)
+
+    """Количество полос в волне изменятеся строкой ниже. Меняйте значение 5 на большее чтобы сделать меньше полос"""
 
     for row_num in range(number_enm_y - 5):
 
