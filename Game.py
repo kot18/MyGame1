@@ -3,6 +3,7 @@ import movements
 
 from Player import player
 from pygame.sprite import Group
+from stats import Stats
 
 def start_game():
 
@@ -22,6 +23,8 @@ def start_game():
 
     movements.spawn_enemys(screen, enemys)
 
+    stats = Stats()
+
     while True:
 
         movements.events(screen, Player, bullets)
@@ -32,6 +35,6 @@ def start_game():
 
         movements.update_bullets(enemys, bullets)
 
-        movements.update_enm(enemys)
+        movements.update_enm(stats, screen, Player, enemys, bullets)
 
 start_game()
