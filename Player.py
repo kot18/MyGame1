@@ -33,3 +33,8 @@ class player():
             self.center -= 1.3
 
         self.rect.centerx = self.center
+
+    def create_player(self):
+        """Спавн игрока в нулевой поциции"""
+
+        self.center = self.screen_rect.centerx
