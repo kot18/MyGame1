@@ -48,7 +48,7 @@ def update(bg_color, screen, Player, enemys, bullets):
 
     pygame.display.flip()
 
-def update_bullets(enemys, bullets):
+def update_bullets(screen, enemys, bullets):
     """обновление позиции снаряда"""
 
     bullets.update()
@@ -58,6 +58,10 @@ def update_bullets(enemys, bullets):
             bullets.remove(bullet)
 
     collisions = pygame.sprite.groupcollide(bullets, enemys, True, True)
+
+    if len(enemys) == 0:
+        bullets.empty()
+        spawn_enemys(screen, enemys)
 
 def player_kill(stats, screen, Player, enemys, bullets):
     """Столкновение игрока и противника"""
@@ -81,6 +85,18 @@ def update_enm(stats, screen, Player, enemys, bullets):
 
     if pygame.sprite.spritecollideany(Player, enemys):
         player_kill(stats, screen, Player, enemys, bullets)
+    enemys_check(stats, screen, Player, enemys, bullets)
+
+def enemys_check(stats, screen, Player, enemys, bullets):
+    """Проверка, на край экрана (если противник дошёл до края)"""
+
+    screen_rect = screen.get_rect()
+
+    for Enm in enemys.sprites():
+        if Enm.rect.bottom >= screen_rect.bottom:
+            player_kill(stats, screen, Player, enemys, bullets)
+            break
+
 
 def spawn_enemys(screen, enemys):
 
