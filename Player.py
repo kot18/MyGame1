@@ -3,7 +3,7 @@ import pygame
 class player():
 
     def __init__(self, screen):
-        "Игрок"
+        """Игрок"""
 
         self.screen = screen
         self.image = pygame.image.load('assets/player.png')
@@ -24,7 +24,7 @@ class player():
         self.screen.blit(self.image, self.rect)
 
     def update_position_player(self):
-        "Обновление позиции пушки"
+        """Обновление позиции пушки"""
 
         if self.mright == True and self.rect.right < self.screen_rect.right:
             self.center += 1.3
