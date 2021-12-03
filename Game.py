@@ -33,7 +33,7 @@ def start_game():
 
         movements.update(bg_color, screen, Player, enemys, bullets)
 
-        movements.update_bullets(enemys, bullets)
+        movements.update_bullets(screen, enemys, bullets)
 
         movements.update_enm(stats, screen, Player, enemys, bullets)
 
