@@ -47,7 +47,7 @@ def update(bg_color, screen, Player, enemys, bullets):
 
     pygame.display.flip()
 
-def update_bullets(bullets):
+def update_bullets(enemys, bullets):
     """обновление позиции снаряда"""
 
     bullets.update()
@@ -55,6 +55,9 @@ def update_bullets(bullets):
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
+
+    """Проверка на коллизию, где ключ - снаряд, а значение противник. Значения True означают, что при соприкосновении снаряда и противника будут удаляться снаряд и противник"""
+    collisions = pygame.sprite.groupcollide(bullets, enemys, True, True)
 
 def update_enm(enemys):
     enemys.update()
