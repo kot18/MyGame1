@@ -34,10 +34,12 @@ def events(screen, Player, bullets):
             elif event.key == pygame.K_LEFT:
                 Player.mleft = False
 
-def update(bg_color, screen, Player, enemys, bullets):
+def update(bg_color, screen, stats, sc, Player, enemys, bullets):
     """Обновление экрана"""
 
     screen.fill(bg_color)
+
+    sc.shovw_score()
 
     for bullet in bullets.sprites():
         bullet.draw_bullet()
@@ -48,7 +50,7 @@ def update(bg_color, screen, Player, enemys, bullets):
 
     pygame.display.flip()
 
-def update_bullets(screen, enemys, bullets):
+def update_bullets(screen, stats, sc, enemys, bullets):
     """обновление позиции снаряда"""
 
     bullets.update()
@@ -59,42 +61,63 @@ def update_bullets(screen, enemys, bullets):
 
     collisions = pygame.sprite.groupcollide(bullets, enemys, True, True)
 
+    if collisions:
+
+        for enemys in collisions.values():
+            stats.score += 5 * len(enemys)
+
+        stats.score += 5
+        sc.image_score()
+
+        check_high_score(stats, sc)
+
+        sc.image_players()
+
     if len(enemys) == 0:
         bullets.empty()
         spawn_enemys(screen, enemys)
 
-def player_kill(stats, screen, Player, enemys, bullets):
+def player_kill(stats, screen, sc, Player, enemys, bullets):
     """Столкновение игрока и противника"""
 
-    stats.player_left -= 1
+    if stats.player_left > 0:
 
-    enemys.empty()
 
-    bullets.empty()
+        stats.player_left -= 1
 
-    spawn_enemys(screen, enemys)
+        sc.image_players()
 
-    Player.create_player()
+        enemys.empty()
 
-    time.sleep(1) #После смерти игрока, юудет задержка в 1 секунду
+        bullets.empty()
 
-def update_enm(stats, screen, Player, enemys, bullets):
+        spawn_enemys(screen, enemys)
+
+        Player.create_player()
+
+        time.sleep(1) #После смерти игрока, юудет задержка в 1 секунду
+
+    else:
+        stats.run_game = False
+        sys.exit()
+
+def update_enm(stats, screen, sc, Player, enemys, bullets):
 
     """Обновление позиции противника"""
     enemys.update()
 
     if pygame.sprite.spritecollideany(Player, enemys):
-        player_kill(stats, screen, Player, enemys, bullets)
-    enemys_check(stats, screen, Player, enemys, bullets)
+        player_kill(stats, screen, sc, Player, enemys, bullets)
+    enemys_check(stats, screen, sc, Player, enemys, bullets)
 
-def enemys_check(stats, screen, Player, enemys, bullets):
+def enemys_check(stats, screen, sc, Player, enemys, bullets):
     """Проверка, на край экрана (если противник дошёл до края)"""
 
     screen_rect = screen.get_rect()
 
     for Enm in enemys.sprites():
         if Enm.rect.bottom >= screen_rect.bottom:
-            player_kill(stats, screen, Player, enemys, bullets)
+            player_kill(stats, screen, sc, Player, enemys, bullets)
             break
 
 
@@ -126,3 +149,13 @@ def spawn_enemys(screen, enemys):
             enm.rect.y = enm.rect.height + (enm.rect.height * row_num)
 
             enemys.add(enm)
+
+def check_high_score(stats, sc):
+    """Проверка новых рекордов"""
+
+    if stats.score > stats.high_score:
+        stats.high_score = stats.score
+        sc.image_high_score()
+
+        with open('highscore.txt', 'w') as f:
+            f.write(str(stats.high_score))
