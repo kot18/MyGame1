@@ -4,6 +4,7 @@ import movements
 from Player import player
 from pygame.sprite import Group
 from stats import Stats
+from scores import  Scores
 
 def start_game():
 
@@ -25,16 +26,20 @@ def start_game():
 
     stats = Stats()
 
+    sc = Scores(screen, stats)
+
     while True:
 
         movements.events(screen, Player, bullets)
 
-        Player.update_position_player()
+        if stats.run_game:
 
-        movements.update(bg_color, screen, Player, enemys, bullets)
+            Player.update_position_player()
 
-        movements.update_bullets(screen, enemys, bullets)
+            movements.update(bg_color, screen, stats, sc, Player, enemys, bullets)
 
-        movements.update_enm(stats, screen, Player, enemys, bullets)
+            movements.update_bullets(screen, stats, sc, enemys, bullets)
+
+            movements.update_enm(stats, screen, sc, Player, enemys, bullets)
 
 start_game()
