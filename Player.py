@@ -1,9 +1,12 @@
 import pygame
+from pygame.sprite import Sprite
 
-class player():
+class player(Sprite):
 
     def __init__(self, screen):
         """Игрок"""
+
+        super(player,self).__init__()
 
         self.screen = screen
         self.image = pygame.image.load('assets/player.png')
@@ -27,10 +30,10 @@ class player():
         """Обновление позиции пушки"""
 
         if self.mright == True and self.rect.right < self.screen_rect.right:
-            self.center += 1.3
+            self.center += 1.1
 
         if self.mleft == True and self.rect.left > 0:
-            self.center -= 1.3
+            self.center -= 1.1
 
         self.rect.centerx = self.center
 
